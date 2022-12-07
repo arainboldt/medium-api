@@ -17,8 +17,11 @@ from medium_api._article import Article
 from medium_api._publication import Publication
 from medium_api._top_writers import TopWriters
 from medium_api._latestposts import LatestPosts
+from async_mixin.mixin import AsyncHttpMixin
+from typing import Union, List
+import asyncio
 
-class Medium:
+class Medium(AsyncHttpMixin):
     """Main Medium API Class to access everything
 
         Typical usage example:
@@ -122,6 +125,61 @@ class Medium:
             You have to provide either `username` or `user_id` to get the User object. You
             cannot omit both. 
         """
+        if user_id is not None:
+            return User(user_id = user_id, 
+                        get_resp = self.__get_resp, 
+                        fetch_articles=self.fetch_articles,
+                        fetch_users=self.fetch_users,
+                        save_info = save_info)
+        elif username is not None:
+            resp, _ = self.__get_resp(f'/user/id_for/{str(username)}')
+            user_id = resp['id']
+            return User(user_id = user_id, 
+                        get_resp = self.__get_resp, 
+                        fetch_articles=self.fetch_articles,
+                        fetch_users=self.fetch_users,
+                        save_info = save_info)
+        else:
+            print('[ERROR]: Missing parameter: Please provide "user_id" or "username" to call the function')
+            return None
+
+    def users(self, username: Union[str,List[str]] = None, user_id: Union[str,List[str]] = None, save_info:bool = True):
+        """For getting the Medium User Object(s): Async retrieval when list of usernames or user_ids are passed
+
+            Typical usage example:
+
+            ``nishu = medium.user(username="nishu-jain")``
+
+        Args:
+            username (str, optional): It's your unique Medium username that
+                you can find in the subdomain or at the end of the profile page
+                URL as shown below.
+
+                - ``username``.medium.com
+                - medium.com/@ ``username``
+
+                It's optional only if you've already provided the `user_id`.
+
+            user_id (str, optional): It's your unique alphanumeric Medium ID that 
+                cannot be changed. The User object is initialized using this only. 
+                It's optional only if you've already provided the `username`.
+
+            save_info (bool, optional): If `False`, creates an empty `User` object which
+                needs to be filled using ``user.save_info()`` method later. (Default is 
+                `True`)
+
+        Returns:
+            User: Medium API's User Object (medium_api.user.User) that can be used 
+            to access all the properties and methods associated to the given Medium
+            user.
+
+        Note:
+            You have to provide either `username` or `user_id` to get the User object. You
+            cannot omit both. 
+        """
+        assert (username is not None) or (user_id is not None), 'You have to provide either `username` or `user_id`' \
+                                                                'to get the User object. You cannot omit both. '
+
         if user_id is not None:
             return User(user_id = user_id, 
                         get_resp = self.__get_resp, 
@@ -394,3 +452,144 @@ class Medium:
                     return article_id
 
         return None
+
+    # A Sink Below:
+
+    def get_urls(self, endpoint, key, args):
+        return list(map(lambda x: self.base_url + x[0].format(**{key:x[1]}), 
+                        zip([endpoint]*len(args), args)))
+
+    #user ids
+    def users_id(self, username: Union[str,List[str]] = None):
+        """For getting the Medium User Object(s): Async retrieval when list of usernames or user_ids are passed
+
+        Args:
+            username (str, optional): It's your unique Medium username that
+                you can find in the subdomain or at the end of the profile page
+                URL as shown below.
+
+                - ``username``.medium.com
+                - medium.com/@ ``username``
+
+
+        Returns: List of User ids
+
+        """
+        if not isinstance(username, list):
+            username = [username]
+
+        user_id_urls = self.get_urls(endpoint='/user/id_for/{username}', 
+                                 key='username', 
+                                 args=username)    
+        user_ids_res = self.pipeline(method=self.process_gets, 
+                                 kwargs=dict(urls=user_id_urls))
+        user_ids = [res.json()['id'] for res in user_ids_res]
+        return user_ids
+
+
+    # users' info
+    def user_info(self, username: Union[str,List[str]] = None, user_id: Union[str,List[str]] = None,):
+        assert (username is not None) or (user_id is not None), 'You have to provide either `username` or `user_id`'\
+                                                                'to get the User object. You cannot omit both. '
+        if user_id is None:
+            if not isinstance(username, list):
+                username = [username]
+            user_id = self.user_id(username=username)
+        else:
+            if not isinstance(user_id, list):
+                user_id = [user_id] 
+
+        
+        user_info_urls = self.get_urls(endpoint='/user/{user_id}', 
+                                       key='user_id', 
+                                       args=user_id)    
+        user_info_res = self.pipeline(method=self.process_gets, 
+                                 kwargs=dict(urls=user_info_urls))
+        return user_info_res
+
+    # users' following
+    # users' followers 
+    # users' articles
+    def user_info(self, username: Union[str,List[str]] = None, user_id: Union[str,List[str]] = None,):
+        assert (username is not None) or (user_id is not None), 'You have to provide either `username` or `user_id`'\
+                                                                'to get the User object. You cannot omit both. '
+        if user_id is None:
+            if not isinstance(username, list):
+                username = [username]
+            user_id = self.user_id(username=username)
+        else:
+            if not isinstance(user_id, list):
+                user_id = [user_id] 
+
+        
+        user_article_urls = self.get_urls(endpoint='/user/{user_id}/articles', 
+                                       key='user_id', 
+                                       args=user_id)    
+        user_article_res = self.pipeline(method=self.process_gets, 
+                                 kwargs=dict(urls=user_article_urls))
+        return user_article_res
+
+    # users' top articles
+    # users' interests
+    # articles' info
+    def article_info(self, article_id: Union[str,List[str]]):
+        if not isinstance(article_id, list):
+            article_id = [article_id]
+        article_info_urls = self.get_urls(endpoint='/article/{article_id}', 
+                                       key='article_id', 
+                                       args=article_id)    
+        article_info_res = self.pipeline(method=self.process_gets, 
+                                 kwargs=dict(urls=article_info_urls))
+        return article_info_res
+
+    # articles' content
+    def article_info(self, article_id: Union[str,List[str]]):
+        if not isinstance(article_id, list):
+            article_id = [article_id]
+        article_content_urls = self.get_urls(endpoint='/article/{article_id}/content', 
+                                       key='article_id', 
+                                       args=article_id)    
+        article_content_res = self.pipeline(method=self.process_gets, 
+                                 kwargs=dict(urls=article_content_urls))
+        return article_content_res
+        
+    # articles' markdown
+    # articles' responses
+    # publications' ids
+    # publications' info
+    # publications' articles
+    # publications' newsletters
+    # topfeeds for tags and mode
+    def topfeeds(self, tag: Union[str,List[str]], mode: str = 'hot'):
+        if not isinstance(tag, list):
+            tag = [tag]
+        topfeeds_urls = self.get_urls(endpoint='/topfeeds/{tag}/' + mode, 
+                                       key='tag', 
+                                       args=tag)    
+        topfeeds_res = self.pipeline(method=self.process_gets, 
+                                 kwargs=dict(urls=topfeeds_urls))
+        return topfeeds_res
+
+    # top writers for topic_slug
+    def top_writers(self, topic_slug: Union[str,List[str]]):
+        if not isinstance(topic_slug, list):
+            topic_slug = [topic_slug]
+        top_writers_urls = self.get_urls(endpoint='top_writer/{topic_slug}', 
+                                         key='topic_slug', 
+                                         args=topic_slug)    
+        top_writers_res = self.pipeline(method=self.process_gets, 
+                                        kwargs=dict(urls=top_writers_urls))
+        return top_writers_res
+    # latest posts
+    # related tags
+    def related_tags(self, tag: Union[str,List[str]]):
+        if not isinstance(tag, list):
+            tag = [tag]
+        related_tags_urls = self.get_urls(endpoint='/related_tags/{tag}', 
+                                         key='tag', 
+                                         args=tag)    
+        related_tags_res = self.pipeline(method=self.process_gets, 
+                                        kwargs=dict(urls=related_tags_urls))
+        return related_tags_res
+
+              
