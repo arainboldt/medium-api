@@ -1,3 +1,18 @@
+[tool.poetry]
+name = "medium-api"
+version = "0.0.1a"
+description = "Async-Python Unofficial Medium API"
+authors = ["''"]
+license = "''"
+readme = "README.md"
+packages = [{include = "medium_api"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+ujson = "^5.6.0"
+async-mixin = {git = "git@github.com:arainboldt/async_mixin.git"}
+
+
 [build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
