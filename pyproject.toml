@@ -2,8 +2,8 @@
 name = "medium-api"
 version = "0.0.1a"
 description = "Async-Python Unofficial Medium API"
-authors = ["''"]
-license = "''"
+authors = ["Andrew Rainboldt <arainboldt@protonmail.com>"]
+license = "MIT"
 readme = "README.md"
 packages = [{include = "medium_api"}]
 
