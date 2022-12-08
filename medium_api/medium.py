@@ -57,7 +57,7 @@ class MediumClient(AsyncHttpMixin):
         See https://docs.rapidapi.com/docs/keys to learn more about RapidAPI keys.
 
     """
-    base_url = 'medium2.p.rapidapi.com',
+    base_url = 'medium2.p.rapidapi.com'
     def __init__(self, 
                  rapidapi_key:str, 
                  calls:int=0,
