@@ -46,7 +46,7 @@ asyncio-throttle = "^1.0.2"
 type = "git"
 url = "git@github.com:arainboldt/async_mixin.git"
 reference = "HEAD"
-resolved_reference = "f7e54ecd1851baf65fcaac4f22c2c355df158b5e"
+resolved_reference = "2b9c654eb2203b4f50e705ab92453f4de6a6a879"
 
 [[package]]
 name = "async-timeout"
