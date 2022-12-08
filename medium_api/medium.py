@@ -21,7 +21,7 @@ from async_mixin.mixin import AsyncHttpMixin
 from typing import Union, List
 import asyncio
 
-class Medium(AsyncHttpMixin):
+class MediumClient(AsyncHttpMixin):
     """Main Medium API Class to access everything
 
         Typical usage example:
@@ -57,13 +57,24 @@ class Medium(AsyncHttpMixin):
         See https://docs.rapidapi.com/docs/keys to learn more about RapidAPI keys.
 
     """
-    def __init__(self, rapidapi_key:str, base_url:str='medium2.p.rapidapi.com', calls:int=0):
+
+    def __init__(self, 
+                 rapidapi_key:str, 
+                 base_url:str='medium2.p.rapidapi.com', 
+                 calls:int=0,
+                 n: int = 100,
+                 p: int = 60,
+                 ):
+        super(MediumClient, self).__init__()
         self.headers = {
             'X-RapidAPI-Key': rapidapi_key,
             'User-Agent': f"medium-api-python-sdk"
         }
         self.base_url = base_url
         self.calls = calls
+        self.set_rate_limit(n=n, p=p)
+
+
 
     def __get_resp(self, endpoint:str, retries:int=0):
         conn = HTTPSConnection(self.base_url)
@@ -488,7 +499,7 @@ class Medium(AsyncHttpMixin):
 
 
     # users' info
-    def user_info(self, username: Union[str,List[str]] = None, user_id: Union[str,List[str]] = None,):
+    def users_info(self, username: Union[str,List[str]] = None, user_id: Union[str,List[str]] = None,):
         assert (username is not None) or (user_id is not None), 'You have to provide either `username` or `user_id`'\
                                                                 'to get the User object. You cannot omit both. '
         if user_id is None:
