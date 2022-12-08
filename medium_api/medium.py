@@ -494,7 +494,7 @@ class MediumClient(AsyncHttpMixin):
         user_ids_res = self.pipeline(method=self.process_gets, 
                                  args=user_id_urls)
         if user_ids_res:
-            return dict(zip(username, [res.json() for res in user_ids_res]))
+            return dict(zip(username, user_ids_res))
 
 
     # users' info
@@ -516,7 +516,7 @@ class MediumClient(AsyncHttpMixin):
         user_info_res = self.pipeline(method=self.process_gets, 
                                  args=user_info_urls)
         if user_info_res:
-            return dict(zip(user_id, [res.json() for res in user_info_res]))
+            return dict(zip(user_id, user_info_res))
 
     # users' following
     # users' followers 
@@ -539,7 +539,7 @@ class MediumClient(AsyncHttpMixin):
         user_article_res = self.pipeline(method=self.process_gets, 
                                  args=user_article_urls)
         if user_article_res:
-            return dict(zip(user_id, [res.json() for res in user_article_res]))
+            return dict(zip(user_id, user_article_res))
 
 
 
@@ -555,7 +555,7 @@ class MediumClient(AsyncHttpMixin):
         article_info_res = self.pipeline(method=self.process_gets, 
                                  args=article_info_urls)
         if article_info_res:
-            return dict(zip(article_id, [res.json() for res in article_info_res]))
+            return dict(zip(article_id, article_info_res))
 
     # articles' content
     def article_info(self, article_id: Union[str,List[str]]):
@@ -567,7 +567,7 @@ class MediumClient(AsyncHttpMixin):
         article_content_res = self.pipeline(method=self.process_gets, 
                                  args=article_content_urls)
         if article_content_res:
-            return dict(zip(article_id, [res.json() for res in article_content_res]))
+            return dict(zip(article_id, article_content_res))
         
     # articles' markdown
     # articles' responses
@@ -585,7 +585,7 @@ class MediumClient(AsyncHttpMixin):
         topfeeds_res = self.pipeline(method=self.process_gets, 
                                  args=topfeeds_urls)
         if topfeeds_res:
-            return dict(zip(tag, [res.json() for res in topfeeds_res]))
+            return dict(zip(tag, topfeeds_res))
 
     # top writers for topic_slug
     def top_writers(self, topic_slug: Union[str,List[str]]):
@@ -597,7 +597,7 @@ class MediumClient(AsyncHttpMixin):
         top_writers_res = self.pipeline(method=self.process_gets, 
                                         args=top_writers_urls)
         if top_writers_res:
-            return dict(zip(topic_slug, [res.json() for res in top_writers_res]))
+            return dict(zip(topic_slug, top_writers_res))
     # latest posts
     # related tags
     def related_tags(self, tag: Union[str,List[str]]):
@@ -609,6 +609,6 @@ class MediumClient(AsyncHttpMixin):
         related_tags_res = self.pipeline(method=self.process_gets, 
                                         args=related_tags_urls)
         if related_tags_res:
-            return dict(zip(tag, [res.json() for res in related_tags_res]))
+            return dict(zip(tag, related_tags_res))
 
               
