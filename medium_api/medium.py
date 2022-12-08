@@ -57,7 +57,7 @@ class MediumClient(AsyncHttpMixin):
         See https://docs.rapidapi.com/docs/keys to learn more about RapidAPI keys.
 
     """
-    base_url = 'https://medium2.p.rapidapi.com',
+    base_url = 'medium2.p.rapidapi.com',
     def __init__(self, 
                  rapidapi_key:str, 
                  calls:int=0,
@@ -70,7 +70,6 @@ class MediumClient(AsyncHttpMixin):
             "X-RapidAPI-Host": "medium2.p.rapidapi.com",
             'User-Agent': f"medium-api-python-sdk"
         }
-        self.base_url = base_url
         self.calls = calls
         self.set_rate_limit(n=n, p=p)
 
@@ -467,7 +466,7 @@ class MediumClient(AsyncHttpMixin):
     # A Sink Below:
 
     def get_urls(self, endpoint, key, args):
-        return list(map(lambda x: self.base_url + x[0].format(**{key:x[1]}), 
+        return list(map(lambda x: 'https://' + self.base_url + x[0].format(**{key:x[1]}), 
                         zip([endpoint]*len(args), args)))
 
     #user ids
