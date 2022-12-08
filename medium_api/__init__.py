@@ -1,4 +1,4 @@
-from medium_api.medium import Medium
+from medium_api.medium import MediumClient
 
 # To prevent importing other modules while `from medium_api import *`
 __all__ = [
