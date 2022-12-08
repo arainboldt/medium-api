@@ -67,6 +67,7 @@ class MediumClient(AsyncHttpMixin):
         super(MediumClient, self).__init__()
         self.headers = {
             'X-RapidAPI-Key': rapidapi_key,
+            "X-RapidAPI-Host": "medium2.p.rapidapi.com",
             'User-Agent': f"medium-api-python-sdk"
         }
         self.base_url = base_url
