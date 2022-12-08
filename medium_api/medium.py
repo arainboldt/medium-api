@@ -57,10 +57,9 @@ class MediumClient(AsyncHttpMixin):
         See https://docs.rapidapi.com/docs/keys to learn more about RapidAPI keys.
 
     """
-
+    base_url = 'https://medium2.p.rapidapi.com',
     def __init__(self, 
                  rapidapi_key:str, 
-                 base_url:str='medium2.p.rapidapi.com', 
                  calls:int=0,
                  n: int = 100,
                  p: int = 60,
@@ -494,8 +493,7 @@ class MediumClient(AsyncHttpMixin):
                                  args=username)    
         user_ids_res = self.pipeline(method=self.process_gets, 
                                  kwargs=dict(urls=user_id_urls))
-        user_ids = [res.json()['id'] for res in user_ids_res]
-        return user_ids
+        return dict(zip(username, [res.json() for res in user_ids_res]))
 
 
     # users' info
@@ -516,7 +514,7 @@ class MediumClient(AsyncHttpMixin):
                                        args=user_id)    
         user_info_res = self.pipeline(method=self.process_gets, 
                                  kwargs=dict(urls=user_info_urls))
-        return user_info_res
+        return dict(zip(user_id, [res.json() for res in user_info_res]))
 
     # users' following
     # users' followers 
@@ -538,7 +536,9 @@ class MediumClient(AsyncHttpMixin):
                                        args=user_id)    
         user_article_res = self.pipeline(method=self.process_gets, 
                                  kwargs=dict(urls=user_article_urls))
-        return user_article_res
+        return dict(zip(user_id, [res.json() for res in user_article_res]))
+
+
 
     # users' top articles
     # users' interests
@@ -551,7 +551,7 @@ class MediumClient(AsyncHttpMixin):
                                        args=article_id)    
         article_info_res = self.pipeline(method=self.process_gets, 
                                  kwargs=dict(urls=article_info_urls))
-        return article_info_res
+        return dict(zip(article_id, [res.json() for res in article_info_res]))
 
     # articles' content
     def article_info(self, article_id: Union[str,List[str]]):
@@ -562,7 +562,7 @@ class MediumClient(AsyncHttpMixin):
                                        args=article_id)    
         article_content_res = self.pipeline(method=self.process_gets, 
                                  kwargs=dict(urls=article_content_urls))
-        return article_content_res
+        return dict(zip(article_id, [res.json() for res in article_content_res]))
         
     # articles' markdown
     # articles' responses
@@ -579,7 +579,7 @@ class MediumClient(AsyncHttpMixin):
                                        args=tag)    
         topfeeds_res = self.pipeline(method=self.process_gets, 
                                  kwargs=dict(urls=topfeeds_urls))
-        return topfeeds_res
+        return dict(zip(tag, [res.json() for res in topfeeds_res]))
 
     # top writers for topic_slug
     def top_writers(self, topic_slug: Union[str,List[str]]):
@@ -590,7 +590,7 @@ class MediumClient(AsyncHttpMixin):
                                          args=topic_slug)    
         top_writers_res = self.pipeline(method=self.process_gets, 
                                         kwargs=dict(urls=top_writers_urls))
-        return top_writers_res
+        return dict(zip(topic_slug, [res.json() for res in top_writers_res]))
     # latest posts
     # related tags
     def related_tags(self, tag: Union[str,List[str]]):
@@ -601,6 +601,6 @@ class MediumClient(AsyncHttpMixin):
                                          args=tag)    
         related_tags_res = self.pipeline(method=self.process_gets, 
                                         kwargs=dict(urls=related_tags_urls))
-        return related_tags_res
+        return dict(zip(tag, [res.json() for res in related_tags_res]))
 
               
