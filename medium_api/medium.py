@@ -521,7 +521,7 @@ class MediumClient(AsyncHttpMixin):
     # users' following
     # users' followers 
     # users' articles
-    def user_info(self, username: Union[str,List[str]] = None, user_id: Union[str,List[str]] = None,):
+    def user_articles(self, username: Union[str,List[str]] = None, user_id: Union[str,List[str]] = None,):
         assert (username is not None) or (user_id is not None), 'You have to provide either `username` or `user_id`'\
                                                                 'to get the User object. You cannot omit both. '
         if user_id is None:
@@ -537,7 +537,7 @@ class MediumClient(AsyncHttpMixin):
                                        key='user_id', 
                                        args=user_id)    
         user_article_res = self.pipeline(method=self.process_gets, 
-                                 args=user_article_urls)
+                                         args=user_article_urls)
         if user_article_res:
             return dict(zip(user_id, user_article_res))
 
@@ -591,13 +591,14 @@ class MediumClient(AsyncHttpMixin):
     def top_writers(self, topic_slug: Union[str,List[str]]):
         if not isinstance(topic_slug, list):
             topic_slug = [topic_slug]
-        top_writers_urls = self.get_urls(endpoint='top_writer/{topic_slug}', 
+        top_writers_urls = self.get_urls(endpoint='top_writers/{topic_slug}', 
                                          key='topic_slug', 
                                          args=topic_slug)    
         top_writers_res = self.pipeline(method=self.process_gets, 
                                         args=top_writers_urls)
         if top_writers_res:
             return dict(zip(topic_slug, top_writers_res))
+
     # latest posts
     # related tags
     def related_tags(self, tag: Union[str,List[str]]):
