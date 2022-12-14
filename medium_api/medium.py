@@ -504,7 +504,7 @@ class MediumClient(AsyncHttpMixin):
         if user_id is None:
             if not isinstance(username, list):
                 username = [username]
-            user_id = self.user_id(username=username)
+            user_id = self.users_id(username=username)
         else:
             if not isinstance(user_id, list):
                 user_id = [user_id] 
@@ -527,7 +527,7 @@ class MediumClient(AsyncHttpMixin):
         if user_id is None:
             if not isinstance(username, list):
                 username = [username]
-            user_id = self.user_id(username=username)
+            user_id = self.users_id(username=username)
         else:
             if not isinstance(user_id, list):
                 user_id = [user_id] 
