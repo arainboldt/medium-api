@@ -558,7 +558,7 @@ class MediumClient(AsyncHttpMixin):
             return dict(zip(article_id, article_info_res))
 
     # articles' content
-    def article_info(self, article_id: Union[str,List[str]]):
+    def article_content(self, article_id: Union[str,List[str]]):
         if not isinstance(article_id, list):
             article_id = [article_id]
         article_content_urls = self.get_urls(endpoint='/article/{article_id}/content', 
@@ -583,7 +583,7 @@ class MediumClient(AsyncHttpMixin):
                                        key='tag', 
                                        args=tag)    
         topfeeds_res = self.pipeline(method=self.process_gets, 
-                                 args=topfeeds_urls)
+                                     args=topfeeds_urls)
         if topfeeds_res:
             return dict(zip(tag, topfeeds_res))
 
@@ -604,10 +604,10 @@ class MediumClient(AsyncHttpMixin):
         if not isinstance(tag, list):
             tag = [tag]
         related_tags_urls = self.get_urls(endpoint='/related_tags/{tag}', 
-                                         key='tag', 
-                                         args=tag)    
+                                          key='tag', 
+                                          args=tag)    
         related_tags_res = self.pipeline(method=self.process_gets, 
-                                        args=related_tags_urls)
+                                         args=related_tags_urls)
         if related_tags_res:
             return dict(zip(tag, related_tags_res))
 
