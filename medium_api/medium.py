@@ -71,10 +71,8 @@ class MediumClient(AsyncHttpMixin):
             'User-Agent': f"medium-api-python-sdk"
         }
         self.set_rate_limit(n=n, p=p)
-        self.call_count_key = 'x-amzn-requestid'
         self.call_count_limit_key = 'X-RateLimit-All-endpoints-Limit'
         self.call_limit_remaining_key = 'X-RateLimit-All-endpoints-Remaining'
-        self.call_counts = None
         self.call_count_limit = None
         self.remaining_calls = None
 
